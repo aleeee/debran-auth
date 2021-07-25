@@ -36,10 +36,7 @@ public class DebranOidcUserService extends OidcUserService {
 	}
 	
 	private void updateUser(User userInfo) {
-		User user = userRepository.findByEmail(userInfo.getEmail());
-		if(user == null) {
-			user = new User();
-		}
+		User user = userRepository.findByEmail(userInfo.getEmail()).orElse(new User());
 		user.setEmail(userInfo.getEmail());
 		user.setImageUrl(userInfo.getImageUrl());
 		user.setName(userInfo.getName());

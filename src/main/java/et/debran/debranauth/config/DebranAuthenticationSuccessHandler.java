@@ -40,7 +40,7 @@ public class DebranAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 		DefaultOidcUser oidcUser = (DefaultOidcUser) authentication.getPrincipal();
 		Map<String, Object> attributes = oidcUser.getAttributes();
 		String email = (String) attributes.get("email");
-		User user = userRepository.findByEmail(email);
+		User user = userRepository.findByEmail(email).orElseThrow();
 		String token = jwtTokenUtil.createJwtToken(user.getEmail());
 		String redirectionUrl = UriComponentsBuilder
 				.fromUriString(homePage)

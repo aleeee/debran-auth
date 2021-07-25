@@ -1,8 +1,6 @@
 package et.debran.debranauth.config.jwt;
 
 import java.io.IOException;
-import java.util.Arrays;
-
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -12,19 +10,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import et.debran.debranauth.util.JwtTokenUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureException;
 
-import static et.debran.debranauth.constants.DebranConstants.TOKEN_PARAM;
+import static et.debran.debranauth.constants.DebranConstants.AUTH_HEADER;
+import static et.debran.debranauth.constants.DebranConstants.TOKEN_PREFIX;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter{
 	private static final Logger log = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
@@ -39,7 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 		
-		String token = request.getParameter(TOKEN_PARAM);
+		String token = retreiveJwtTokenFromRequest(request);
 		String username = null;
 		
 		if(token != null) {
@@ -61,7 +60,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 			UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 			
 			if(jwtTokenUtil.validateJwtToken(token, userDetails)) {
-				UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null,Arrays.asList(new SimpleGrantedAuthority("ROLE_ADMIN")));
+				UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null,userDetails.getAuthorities());
 				authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 				log.info("user {} authenticated ", username);
 				SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -69,6 +68,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 		}
 		
 		filterChain.doFilter(request, response);
+	}
+	
+	private String retreiveJwtTokenFromRequest(HttpServletRequest request) {
+		String authHeader = request.getHeader(AUTH_HEADER);
+		
+		if(StringUtils.hasText(authHeader) && authHeader.startsWith(TOKEN_PREFIX)){
+			return authHeader.substring(7, authHeader.length());
+		}
+		return null;
 	}
 
 }
