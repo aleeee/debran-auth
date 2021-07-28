@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -35,8 +36,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	@Autowired
 	private DebranAuthenticationSuccessHandler authSuccessHandler;
 	
-	@Autowired
-	private JwtAuthenticationFilter jwtAuthenticationFilter;
+//	@Autowired
+//	private JwtAuthenticationFilter jwtAuthenticationFilter;
 	
 	@Autowired
 	BCryptPasswordEncoder encoder;
@@ -56,32 +57,37 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests()
-			.antMatchers("/h2-console/**", "/auth/**", "/webjars/**").permitAll()
-			.anyRequest()
-			.authenticated()
-			.and()
-			.exceptionHandling()
-			.authenticationEntryPoint(jwtAuthEntryPoint)
-			.and()
-			.oauth2Login()
-			.loginPage("/auth/debran-login")
-			.redirectionEndpoint()
-//			.baseUri("/oauth2/authorize/google")
-			.and()
-			.userInfoEndpoint()
-			.oidcUserService(oidcUserService)
-			.and()
-			.authorizationEndpoint()
-			.baseUri("/oauth2/authorize")
-			.authorizationRequestRepository(authRepository)
-			.and()
-			.successHandler(authSuccessHandler);
+//		http.authorizeRequests()
+//			.antMatchers("/h2-console/**", "/auth/**", "/webjars/**").permitAll()
+//			.anyRequest()
+//			.authenticated()
+//			.and()
+//			.exceptionHandling()
+//			.authenticationEntryPoint(jwtAuthEntryPoint)
+//			.and()
+//			.oauth2Login()
+//			.loginPage("/auth/debran-login")
+//			.redirectionEndpoint()
+////			.baseUri("/oauth2/authorize/google")
+//			.and()
+//			.userInfoEndpoint()
+//			.oidcUserService(oidcUserService)
+//			.and()
+//			.authorizationEndpoint()
+//			.baseUri("/oauth2/authorize")
+//			.authorizationRequestRepository(authRepository)
+//			.and()
+//			.successHandler(authSuccessHandler);
 			
 //	       http.csrf().disable();
 //	        http.headers().frameOptions().disable();
 	        
-	        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+//	        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+		http.authorizeRequests().anyRequest().permitAll();
+	}
+	@Override
+	public void configure(WebSecurity web) throws Exception {
+		web.ignoring().antMatchers("/**");
 	}
 	
 	

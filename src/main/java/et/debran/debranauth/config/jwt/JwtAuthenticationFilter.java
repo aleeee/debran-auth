@@ -25,7 +25,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureException;
 
 import static et.debran.debranauth.constants.DebranConstants.TOKEN_PARAM;
-@Component
+//@Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter{
 	private static final Logger log = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 	

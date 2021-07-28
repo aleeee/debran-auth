@@ -15,7 +15,7 @@
 	<name>debran-auth</name>
 	<description>user authentication and authorization</description>
 	<properties>
-		<java.version>11</java.version>
+		<java.version>1.8</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -45,6 +45,12 @@
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
+		<dependency>
+	<groupId>mysql</groupId>
+	<artifactId>mysql-connector-java</artifactId>
+	<scope>runtime</scope>
+</dependency>
+		
 		<dependency>
         <groupId>com.h2database</groupId>
         <artifactId>h2</artifactId>
